@@ -8,19 +8,19 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "Sub-Atomica",
+    name: "QuanView",
     platforms: [
         .iOS("16.0")
     ],
     products: [
         .iOSApplication(
-            name: "Sub-Atomica",
+            name: "QuanView",
             targets: ["AppModule"],
-            bundleIdentifier: "anshulkumaria1612-gmail.com.Sub-Atomica",
+            bundleIdentifier: "anshulkumaria1612-gmail.com.QuanView",
             teamIdentifier: "G3Y27UPJJ3",
             displayVersion: "1.0",
             bundleVersion: "1",
-            appIcon: .asset("AppIcon"),
+            appIcon: .placeholder(icon: .camera),
             accentColor: .presetColor(.cyan),
             supportedDeviceFamilies: [
                 .pad,
@@ -33,9 +33,7 @@ let package = Package(
                 .portraitUpsideDown(.when(deviceFamilies: [.pad]))
             ],
             capabilities: [
-                .camera(purposeString: "AR View."),
-                .photoLibrary(purposeString: "Photos access."),
-                .photoLibraryAdd(purposeString: "Photo saving.")
+                .camera(purposeString: "QuanView uses the camera only to place experiments in your real-world space.")
             ],
             appCategory: .education
         )
@@ -43,7 +41,10 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "AppModule",
-            path: "."
+            path: ".",
+            resources: [
+                .process("Resources/Models")
+            ]
         )
     ],
     swiftLanguageVersions: [.version("6")]

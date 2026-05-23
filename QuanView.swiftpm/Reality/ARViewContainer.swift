@@ -243,6 +243,7 @@ struct ARViewContainer: UIViewRepresentable {
             
             isSimulating = false
             let uiColor = parent.concept.uiColor
+            addBundledModelReference(for: parent.concept)
             
             switch parent.concept {
             case .superposition:
@@ -447,6 +448,41 @@ struct ARViewContainer: UIViewRepresentable {
             Task {
                 try? await Task.sleep(nanoseconds: 3_000_000_000)
                 self.parent.resetSimulation = true
+            }
+        }
+        
+        func addBundledModelReference(for concept: QuantumConcept) {
+            guard let entity = loadEntity(named: concept.modelAssetName) else { return }
+            entity.name = "reference_model"
+            entity.position = [0, -0.02, 0]
+            entity.scale = referenceScale(for: concept)
+            modelBase.addChild(entity)
+        }
+        
+        func loadEntity(named name: String) -> Entity? {
+            if let entity = try? Entity.load(named: name, in: .module) {
+                return entity
+            }
+            
+            if let url = Bundle.main.url(forResource: name, withExtension: "usdz"),
+               let entity = try? Entity.load(contentsOf: url) {
+                return entity
+            }
+            
+            if let url = Bundle.main.url(forResource: name, withExtension: "usdz", subdirectory: "Models"),
+               let entity = try? Entity.load(contentsOf: url) {
+                return entity
+            }
+            
+            return nil
+        }
+        
+        func referenceScale(for concept: QuantumConcept) -> SIMD3<Float> {
+            switch concept {
+            case .waveParticle: return [0.0008, 0.0008, 0.0008]
+            case .superposition: return [0.12, 0.12, 0.12]
+            case .tesseract: return [0.12, 0.12, 0.12]
+            default: return [0.08, 0.08, 0.08]
             }
         }
     }

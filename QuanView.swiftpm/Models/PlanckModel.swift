@@ -60,6 +60,53 @@ enum QuantumConcept: String, CaseIterable, Identifiable, Codable {
         case .tesseract: return "A four-dimensional geometric anomaly representing zero-point energy fluctuations in a stabilized vacuum."
         }
     }
+    
+    var modelAssetName: String {
+        switch self {
+        case .superposition: return "Atomic_Orbitals"
+        case .waveParticle: return "YOUNGS_DOUBLE_SLIT_EXPERIMENT"
+        case .entanglement: return "atom_3D"
+        case .tunneling: return "Atomic_Models"
+        case .observer: return "Atomic_Models"
+        case .tesseract: return "Tesseract"
+        }
+    }
+    
+    var viewerFitSize: Float {
+        switch self {
+        case .superposition: return 0.72
+        case .waveParticle: return 0.82
+        case .entanglement: return 0.68
+        case .tunneling: return 0.78
+        case .observer: return 0.78
+        case .tesseract: return 0.62
+        }
+    }
+    
+    var viewerCameraDistance: Float {
+        switch self {
+        case .waveParticle: return 1.9
+        case .tesseract: return 1.45
+        default: return 1.65
+        }
+    }
+    
+    var experimentPrompt: String {
+        switch self {
+        case .superposition:
+            return "Rotate through the orbital shapes, then run collapse to compare probability cloud behavior against a single observed state."
+        case .waveParticle:
+            return "Use the double-slit setup to watch a wavefront become a measurement pattern."
+        case .entanglement:
+            return "Use the atom model as a paired-particle stand-in and watch synchronized state changes."
+        case .tunneling:
+            return "Use the atomic model gallery as the context, then run the particle through the barrier."
+        case .observer:
+            return "Compare the model before and after measurement to see how observation changes the displayed state."
+        case .tesseract:
+            return "Inspect the higher-dimensional frame, then execute the zero-point expansion."
+        }
+    }
 }
 
 struct LabRecord: Identifiable, Codable, Hashable {
@@ -75,9 +122,30 @@ struct LabRecord: Identifiable, Codable, Hashable {
 
 @MainActor
 class UserProgressManager: ObservableObject {
-    @Published var records: [LabRecord] = []
-    @Published var completedConcepts: Set<QuantumConcept> = []
-    @Published var totalSimulationsRun: Int = 0
+    @Published var records: [LabRecord] = [] {
+        didSet { persist() }
+    }
+    @Published var completedConcepts: Set<QuantumConcept> = [] {
+        didSet { persist() }
+    }
+    @Published var totalSimulationsRun: Int = 0 {
+        didSet { persist() }
+    }
+    
+    private let storageKey = "QuanView.UserProgress"
+    private let legacyStorageKey = "SubAtomica.UserProgress"
+    private var isLoading = false
+    
+    var completionRatio: Double {
+        guard !QuantumConcept.allCases.isEmpty else { return 0 }
+        return Double(completedConcepts.count) / Double(QuantumConcept.allCases.count)
+    }
+    
+    var latestRecord: LabRecord? { records.first }
+    
+    init() {
+        load()
+    }
     
     func addRecord(image: UIImage, for concept: QuantumConcept) {
         guard let data = image.jpegData(compressionQuality: 0.8) else { return }
@@ -109,4 +177,40 @@ class UserProgressManager: ObservableObject {
     func deleteRecord(at indexSet: IndexSet) {
         records.remove(atOffsets: indexSet)
     }
+    
+    func resetAllData() {
+        records.removeAll()
+        completedConcepts.removeAll()
+        totalSimulationsRun = 0
+    }
+    
+    private func persist() {
+        guard !isLoading else { return }
+        let snapshot = ProgressSnapshot(
+            records: records,
+            completedConcepts: Array(completedConcepts),
+            totalSimulationsRun: totalSimulationsRun
+        )
+        
+        guard let encoded = try? JSONEncoder().encode(snapshot) else { return }
+        UserDefaults.standard.set(encoded, forKey: storageKey)
+    }
+    
+    private func load() {
+        guard let data = UserDefaults.standard.data(forKey: storageKey) ?? UserDefaults.standard.data(forKey: legacyStorageKey),
+              let snapshot = try? JSONDecoder().decode(ProgressSnapshot.self, from: data)
+        else { return }
+        
+        isLoading = true
+        records = snapshot.records
+        completedConcepts = Set(snapshot.completedConcepts)
+        totalSimulationsRun = snapshot.totalSimulationsRun
+        isLoading = false
+    }
+}
+
+private struct ProgressSnapshot: Codable {
+    let records: [LabRecord]
+    let completedConcepts: [QuantumConcept]
+    let totalSimulationsRun: Int
 }
