@@ -34,7 +34,8 @@ let package = Package(
             ],
             capabilities: [
                 .camera(purposeString: "QuanView uses the camera only to place experiments in your real-world space."),
-                .locationAlwaysAndWhenInUse(purposeString: "QuanView records your location when saving experiment logs.")
+                .locationAlwaysAndWhenInUse(purposeString: "QuanView records your location when saving experiment logs."),
+                .locationWhenInUse(purposeString: "QuanView records your location when saving experiment logs.")
             ],
             appCategory: .education
         )

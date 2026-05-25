@@ -304,7 +304,7 @@ struct LogDetailView: View {
                     pdfData = buildPDF()
                     showShareSheet = true
                 } label: {
-                    Image(systemName: "arrow.up.doc")
+                    Image(systemName: "square.and.arrow.up")
                 }
             }
         }
