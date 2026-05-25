@@ -33,7 +33,8 @@ let package = Package(
                 .portraitUpsideDown(.when(deviceFamilies: [.pad]))
             ],
             capabilities: [
-                .camera(purposeString: "QuanView uses the camera only to place experiments in your real-world space.")
+                .camera(purposeString: "QuanView uses the camera only to place experiments in your real-world space."),
+                .locationAlwaysAndWhenInUse(purposeString: "QuanView records your location when saving experiment logs.")
             ],
             appCategory: .education
         )

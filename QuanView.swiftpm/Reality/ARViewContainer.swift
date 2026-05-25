@@ -139,8 +139,12 @@ struct ARViewContainer: UIViewRepresentable {
                 var newMaterials: [RealityKit.Material] = []
                 for mat in modelEntity.model?.materials ?? [] {
                     if var pbr = mat as? PhysicallyBasedMaterial {
-                        pbr.emissiveIntensity = brightness * 3.0
+                        // Boost emissive so the model is clearly visible in any lighting
+                        pbr.emissiveIntensity = max(1.5, brightness * 4.0)
                         newMaterials.append(pbr)
+                    } else if var unlit = mat as? UnlitMaterial {
+                        // Unlit materials are always fully visible — keep as-is
+                        newMaterials.append(unlit)
                     } else {
                         newMaterials.append(mat)
                     }
@@ -295,34 +299,6 @@ struct ARViewContainer: UIViewRepresentable {
                 e1.name = "e1"; e2.name = "e2"
                 modelBase.addChild(e1); modelBase.addChild(e2)
 
-            case .tunneling:
-                let barrier = ModelEntity(mesh: .generateBox(size: [0.05, 0.15, 0.15]), materials: [UnlitMaterial(color: uiColor.withAlphaComponent(0.4))])
-                barrier.position = [0, 0.075, 0]
-                modelBase.addChild(barrier)
-                
-                let particle = ModelEntity(mesh: .generateSphere(radius: 0.015), materials: [UnlitMaterial(color: .white)])
-                particle.position = [-0.15, 0.075, 0]
-                particle.name = "tunnel_particle"
-                modelBase.addChild(particle)
-                
-            case .observer:
-                let wave = ModelEntity(mesh: .generateBox(size: [0.15, 0.01, 0.05]), materials: [UnlitMaterial(color: uiColor.withAlphaComponent(0.5))])
-                wave.position = [0, 0.1, 0]
-                wave.name = "unobserved_wave"
-                modelBase.addChild(wave)
-                
-                let particle = ModelEntity(mesh: .generateSphere(radius: 0.015), materials: [UnlitMaterial(color: uiColor)])
-                particle.position = [0, 0.1, 0]
-                particle.name = "observed_particle"
-                particle.isEnabled = false
-                modelBase.addChild(particle)
-                
-                let detector = ModelEntity(mesh: .generateBox(size: [0.03, 0.03, 0.03]), materials: [UnlitMaterial(color: .red)])
-                detector.position = [0, 0.2, 0]
-                detector.name = "detector"
-                detector.isEnabled = false
-                modelBase.addChild(detector)
-
             case .tesseract:
                 var shellMat = PhysicallyBasedMaterial()
                 shellMat.baseColor = .init(tint: uiColor.withAlphaComponent(0.3))
@@ -389,15 +365,6 @@ struct ARViewContainer: UIViewRepresentable {
                     e1.position = [sin(timeElapsed * Float(speed)) * radius, 0.1, cos(timeElapsed * Float(speed)) * radius]
                     e2.position = [-sin(timeElapsed * Float(speed)) * radius, 0.1, -cos(timeElapsed * Float(speed)) * radius]
                 }
-            case .tunneling:
-                if let p = modelBase.findEntity(named: "tunnel_particle") {
-                    if isSimulating {
-                        p.position.x += (0.005 * parent.physicsIntensity)
-                        if p.position.x > 0.15 { p.position.x = -0.15 }
-                    }
-                }
-            case .observer:
-                modelBase.findEntity(named: "unobserved_wave")?.orientation *= simd_quatf(angle: 0.05 * parent.physicsIntensity, axis: [1, 0, 0])
             case .tesseract:
                 if let shell = modelBase.findEntity(named: "tesseract_shell") {
                     shell.orientation *= simd_quatf(angle: isSimulating ? 0.08 : 0.01, axis: [1, 1, 1])
@@ -431,14 +398,6 @@ struct ARViewContainer: UIViewRepresentable {
                 modelBase.findEntity(named: "e1")?.scale = [1.5, 1.5, 1.5]
                 modelBase.findEntity(named: "e2")?.scale = [1.5, 1.5, 1.5]
                 
-            case .tunneling:
-                break
-                
-            case .observer:
-                modelBase.findEntity(named: "unobserved_wave")?.isEnabled = false
-                modelBase.findEntity(named: "observed_particle")?.isEnabled = true
-                modelBase.findEntity(named: "detector")?.isEnabled = true
-                
             case .tesseract:
                 if let core = modelBase.findEntity(named: "tesseract_core"), let shell = modelBase.findEntity(named: "tesseract_shell") {
                     core.move(to: Transform(scale: [3, 3, 3], translation: .zero), relativeTo: shell, duration: 0.4, timingFunction: .easeInOut)
@@ -456,7 +415,25 @@ struct ARViewContainer: UIViewRepresentable {
             entity.name = "reference_model"
             entity.position = [0, -0.02, 0]
             entity.scale = referenceScale(for: concept)
+            // Boost emissive on load so the model is immediately visible in real-world lighting
+            boostEmissive(entity: entity, intensity: 2.0)
             modelBase.addChild(entity)
+        }
+        
+        func boostEmissive(entity: Entity, intensity: Float) {
+            if let modelEntity = entity as? ModelEntity {
+                var boosted: [RealityKit.Material] = []
+                for mat in modelEntity.model?.materials ?? [] {
+                    if var pbr = mat as? PhysicallyBasedMaterial {
+                        pbr.emissiveIntensity = intensity
+                        boosted.append(pbr)
+                    } else {
+                        boosted.append(mat)
+                    }
+                }
+                if !boosted.isEmpty { modelEntity.model?.materials = boosted }
+            }
+            for child in entity.children { boostEmissive(entity: child, intensity: intensity) }
         }
         
         func loadEntity(named name: String) -> Entity? {
@@ -479,10 +456,10 @@ struct ARViewContainer: UIViewRepresentable {
         
         func referenceScale(for concept: QuantumConcept) -> SIMD3<Float> {
             switch concept {
-            case .waveParticle: return [0.0008, 0.0008, 0.0008]
-            case .superposition: return [0.12, 0.12, 0.12]
-            case .tesseract: return [0.12, 0.12, 0.12]
-            default: return [0.08, 0.08, 0.08]
+            case .waveParticle: return [0.0014, 0.0014, 0.0014]
+            case .superposition: return [0.18, 0.18, 0.18]
+            case .tesseract: return [0.18, 0.18, 0.18]
+            default: return [0.14, 0.14, 0.14]
             }
         }
     }

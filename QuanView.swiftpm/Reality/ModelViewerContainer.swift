@@ -14,6 +14,8 @@ struct ModelViewerContainer: UIViewRepresentable {
     func makeUIView(context: Context) -> ARView {
         let view = ARView(frame: .zero, cameraMode: .nonAR, automaticallyConfigureSession: false)
         view.environment.background = .color(UIColor(red: 0.025, green: 0.03, blue: 0.035, alpha: 1))
+        // Disable post-process effects that cause the grey film overlay
+        view.renderOptions = [.disableDepthOfField, .disableMotionBlur, .disableFaceOcclusions, .disablePersonOcclusion, .disableGroundingShadows]
         
         context.coordinator.view = view
         context.coordinator.installGestures(on: view)
@@ -126,9 +128,15 @@ struct ModelViewerContainer: UIViewRepresentable {
             }
             
             let keyLight = DirectionalLight()
-            keyLight.light.intensity = 2800
+            keyLight.light.intensity = 8000
             keyLight.look(at: .zero, from: [0.6, 1.1, 0.8], relativeTo: nil)
             anchor.addChild(keyLight)
+            
+            // Fill light from below to eliminate dark underside
+            let fillLight = DirectionalLight()
+            fillLight.light.intensity = 2000
+            fillLight.look(at: .zero, from: [-0.4, -0.6, 0.5], relativeTo: nil)
+            anchor.addChild(fillLight)
         }
         
         func loadModel(for concept: QuantumConcept) {
@@ -170,27 +178,6 @@ struct ModelViewerContainer: UIViewRepresentable {
                 right.position = [0.34, 0.16, 0]
                 modelRoot.addChild(left)
                 modelRoot.addChild(right)
-                
-            case .tunneling:
-                let barrier = ModelEntity(mesh: .generateBox(size: [0.035, 0.46, 0.34]), materials: [UnlitMaterial(color: concept.uiColor.withAlphaComponent(0.55))])
-                let particle = ModelEntity(mesh: .generateSphere(radius: 0.035), materials: [UnlitMaterial(color: .white)])
-                barrier.name = "tunnel_barrier"
-                particle.name = "tunnel_particle"
-                barrier.position = [0, 0.12, 0]
-                particle.position = [-0.45, 0.12, 0]
-                modelRoot.addChild(barrier)
-                modelRoot.addChild(particle)
-                
-            case .observer:
-                let wave = ModelEntity(mesh: .generateBox(size: [0.48, 0.018, 0.18]), materials: [UnlitMaterial(color: concept.uiColor.withAlphaComponent(0.65))])
-                let point = ModelEntity(mesh: .generateSphere(radius: 0.042), materials: [UnlitMaterial(color: .white)])
-                wave.name = "observer_wave"
-                point.name = "observer_particle"
-                wave.position = [0, 0.14, 0]
-                point.position = [0, 0.14, 0]
-                point.isEnabled = false
-                modelRoot.addChild(wave)
-                modelRoot.addChild(point)
                 
             case .tesseract:
                 let core = ModelEntity(mesh: .generateSphere(radius: 0.045), materials: [UnlitMaterial(color: .white)])
@@ -275,11 +262,6 @@ struct ModelViewerContainer: UIViewRepresentable {
         
         func resetExperimentLayer(for concept: QuantumConcept) {
             switch concept {
-            case .observer:
-                modelRoot.findEntity(named: "observer_wave")?.isEnabled = true
-                modelRoot.findEntity(named: "observer_particle")?.isEnabled = false
-            case .tunneling:
-                modelRoot.findEntity(named: "tunnel_particle")?.position = [-0.45, 0.12, 0]
             case .tesseract:
                 modelRoot.findEntity(named: "tesseract_energy_core")?.scale = [1, 1, 1]
             default:
@@ -347,19 +329,6 @@ struct ModelViewerContainer: UIViewRepresentable {
                     left.orientation *= simd_quatf(angle: 0.08, axis: [0, 1, 0])
                     right.orientation *= simd_quatf(angle: -0.08, axis: [0, 1, 0])
                 }
-                
-            case .tunneling:
-                if let particle = modelRoot.findEntity(named: "tunnel_particle") {
-                    particle.position.x = -0.45 + progress * 0.9
-                    particle.position.y = 0.12 + sin(progress * .pi) * 0.08
-                }
-                
-            case .observer:
-                if progress > 0.45 {
-                    modelRoot.findEntity(named: "observer_wave")?.isEnabled = false
-                    modelRoot.findEntity(named: "observer_particle")?.isEnabled = true
-                }
-                modelRoot.findEntity(named: "observer_wave")?.orientation *= simd_quatf(angle: 0.06, axis: [1, 0, 0])
                 
             case .tesseract:
                 if let core = modelRoot.findEntity(named: "tesseract_energy_core") {

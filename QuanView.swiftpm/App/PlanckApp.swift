@@ -16,10 +16,10 @@ struct PlanckApp: App {
                 } else {
                     TabView {
                         ExploreView()
-                            .tabItem { Label("Explore", systemImage: "sparkle.magnifyingglass") }
+                            .tabItem { Label("Labs", systemImage: "flask.fill") }
                         
                         LabNotebookView()
-                            .tabItem { Label("Logs", systemImage: "text.book.closed.fill") }
+                            .tabItem { Label("Logs", systemImage: "book.pages.fill") }
                     }
                     .tint(.cyan)
                 }
