@@ -10,6 +10,7 @@ struct ModelViewerContainer: UIViewRepresentable {
     @Binding var resetView: Bool
     @Binding var zoomCommand: Int
     @Binding var interactionCommand: Int
+    var slideIndex: Int = -1
     
     func makeUIView(context: Context) -> ARView {
         let view = ARView(frame: .zero, cameraMode: .nonAR, automaticallyConfigureSession: false)
@@ -37,6 +38,7 @@ struct ModelViewerContainer: UIViewRepresentable {
         
         context.coordinator.applyZoomCommand(zoomCommand)
         context.coordinator.applyInteractionCommand(interactionCommand)
+        context.coordinator.applySlideIndex(slideIndex)
     }
     
     func makeCoordinator() -> Coordinator {
@@ -60,6 +62,7 @@ struct ModelViewerContainer: UIViewRepresentable {
         var lastScale: CGFloat = 1
         var handledZoomCommand = 0
         var handledInteractionCommand = 0
+        var currentSlideIndex = -1
         var isInteracting = false
         var interactionElapsed: Float = 0
         let interactionDuration: Float = 3.0
@@ -242,6 +245,80 @@ struct ModelViewerContainer: UIViewRepresentable {
             guard command != handledInteractionCommand else { return }
             handledInteractionCommand = command
             startInteraction()
+        }
+        
+        func applySlideIndex(_ index: Int) {
+            guard index != -1 else { return }
+            self.currentSlideIndex = index
+            
+            switch currentConcept {
+            case .superposition:
+                for child in modelRoot.children where child.name.starts(with: "superposition_particle") {
+                    if index == 0 {
+                        child.isEnabled = false
+                    } else if index == 1 {
+                        child.isEnabled = true
+                        child.scale = [1, 1, 1]
+                    } else {
+                        if child.name == "superposition_particle_0" {
+                            child.isEnabled = true
+                            child.position = [0.15, 0.05, -0.1]
+                            child.scale = [1.5, 1.5, 1.5]
+                        } else {
+                            child.isEnabled = false
+                        }
+                    }
+                }
+            case .waveParticle:
+                for i in 0..<12 {
+                    if let child = modelRoot.findEntity(named: "wave_marker_\(i)") {
+                        if index == 0 {
+                            child.isEnabled = false
+                        } else if index == 1 {
+                            child.isEnabled = true
+                            child.position = [-0.46 + Float(i) * 0.08, 0.06, -0.34]
+                        } else {
+                            child.isEnabled = true
+                            let xOffset = Float(i % 3 - 1) * 0.15
+                            child.position = [xOffset, 0.06, 0.28]
+                        }
+                    }
+                }
+            case .entanglement:
+                if let left = modelRoot.findEntity(named: "entangled_left"),
+                   let right = modelRoot.findEntity(named: "entangled_right") {
+                    if index == 0 {
+                        left.position = [-0.06, 0.16, 0]
+                        right.position = [0.06, 0.16, 0]
+                        left.scale = [1, 1, 1]
+                        right.scale = [1, 1, 1]
+                    } else if index == 1 {
+                        left.position = [-0.34, 0.16, 0]
+                        right.position = [0.34, 0.16, 0]
+                        left.scale = [1, 1, 1]
+                        right.scale = [1, 1, 1]
+                    } else {
+                        left.position = [-0.34, 0.16, 0]
+                        right.position = [0.34, 0.16, 0]
+                        left.scale = [1.6, 1.6, 1.6]
+                        right.scale = [1.6, 1.6, 1.6]
+                    }
+                }
+            case .tesseract:
+                if let core = modelRoot.findEntity(named: "tesseract_energy_core") {
+                    if index == 0 {
+                        core.isEnabled = false
+                    } else if index == 1 {
+                        core.isEnabled = true
+                        core.scale = [1, 1, 1]
+                    } else {
+                        core.isEnabled = true
+                        core.scale = [2.8, 2.8, 2.8]
+                    }
+                }
+            case nil:
+                break
+            }
         }
         
         func startInteraction() {

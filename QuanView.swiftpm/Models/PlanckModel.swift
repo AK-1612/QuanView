@@ -265,3 +265,368 @@ private struct ProgressSnapshot: Codable {
     let completedConcepts: [QuantumConcept]
     let totalSimulationsRun: Int
 }
+
+// MARK: - Quiz Data Structures
+
+enum QuizLevel: String, CaseIterable, Identifiable, Codable {
+    case beginner = "Beginner"
+    case intermediate = "Intermediate"
+    case advanced = "Advanced"
+    
+    var id: String { rawValue }
+    
+    var description: String {
+        switch self {
+        case .beginner: return "Fundamental quantum concepts & states"
+        case .intermediate: return "Superposition collapses & wave behaviors"
+        case .advanced: return "Math-heavy Bell's tests & 4D manifolds"
+        }
+    }
+    
+    var themeColor: Color {
+        switch self {
+        case .beginner: return .cyan
+        case .intermediate: return .teal
+        case .advanced: return Color(red: 0.7, green: 0.8, blue: 1.0)
+        }
+    }
+}
+
+struct QuizQuestion: Identifiable, Codable, Hashable {
+    let id: UUID
+    let questionText: String
+    let options: [String]
+    let correctIndex: Int
+    let level: QuizLevel
+    let concept: QuantumConcept
+    let explanation: String
+}
+
+// MARK: - Directory Data Structures
+
+enum DirectoryCategory: String, CaseIterable, Identifiable, Codable {
+    case particle = "Subatomic Particles"
+    case equation = "Core Equations"
+    var id: String { rawValue }
+}
+
+struct DirectoryItem: Identifiable, Codable, Hashable {
+    let id: UUID
+    let name: String
+    let category: DirectoryCategory
+    let symbol: String
+    let subtitle: String
+    let properties: [String: String] // e.g. ["Mass": "0", "Spin": "1"]
+    let explanation: String
+    let application: String
+    let concept: QuantumConcept // Used to tie back to the 3D viewer model
+}
+
+// MARK: - Static Datasets
+
+extension QuizQuestion {
+    static let database: [QuizQuestion] = [
+        // MARK: Beginner
+        QuizQuestion(
+            id: UUID(),
+            questionText: "What does quantum superposition state about a particle?",
+            options: [
+                "It exists in exactly one state at all times.",
+                "It exists in multiple states simultaneously until measured.",
+                "It travels faster than light.",
+                "It is always stationary in space."
+            ],
+            correctIndex: 1,
+            level: .beginner,
+            concept: .superposition,
+            explanation: "Superposition states that a physical system remains in multiple potential states concurrently. Only during interaction or observation does it reduce to a single classical state."
+        ),
+        QuizQuestion(
+            id: UUID(),
+            questionText: "Which experiment proved that light behaves as both waves and particles?",
+            options: [
+                "Michelson-Morley Experiment",
+                "Rutherford Gold Foil Experiment",
+                "Young's Double-Slit Experiment",
+                "Stern-Gerlach Experiment"
+            ],
+            correctIndex: 2,
+            level: .beginner,
+            concept: .waveParticle,
+            explanation: "Young's Double-Slit experiment showed that firing individual particles (like photons or electrons) through two slits creates an interference pattern over time, confirming wave-particle duality."
+        ),
+        QuizQuestion(
+            id: UUID(),
+            questionText: "What does the term 'Entanglement' represent?",
+            options: [
+                "Particles colliding and merging together",
+                "Magnetic fields pulling objects together",
+                "Quantum state correlation that exists instantaneously regardless of separation",
+                "Gravitational orbits of quantum systems"
+            ],
+            correctIndex: 2,
+            level: .beginner,
+            concept: .entanglement,
+            explanation: "Entanglement occurs when particles become linked so that measuring the state of one immediately determines the state of the other, even if separated by light-years."
+        ),
+        QuizQuestion(
+            id: UUID(),
+            questionText: "How many cubic cells form the boundaries of a 4D Tesseract?",
+            options: ["4 cells", "6 cells", "8 cells", "16 cells"],
+            correctIndex: 2,
+            level: .beginner,
+            concept: .tesseract,
+            explanation: "A tesseract is the 4D hypercube analogue of a 3D cube. It is bounded by 8 cubic cells, just as a 3D cube is bounded by 6 square faces."
+        ),
+        QuizQuestion(
+            id: UUID(),
+            questionText: "In quantum mechanics, what causes a wavefunction to collapse?",
+            options: [
+                "An increase in temperature",
+                "A measurement or observation event",
+                "Decay of the nucleus",
+                "Gravitational collapse"
+            ],
+            correctIndex: 1,
+            level: .beginner,
+            concept: .superposition,
+            explanation: "The act of measurement forces a quantum system out of superposition, collapsing the wave function into a single definite state."
+        ),
+        
+        // MARK: Intermediate
+        QuizQuestion(
+            id: UUID(),
+            questionText: "According to the de Broglie relation, how are wavelength (λ) and momentum (p) related?",
+            options: [
+                "λ is proportional to p",
+                "λ is inversely proportional to p",
+                "λ is independent of p",
+                "λ is proportional to p squared"
+            ],
+            correctIndex: 1,
+            level: .intermediate,
+            concept: .waveParticle,
+            explanation: "The de Broglie relation is λ = h / p, meaning wavelength is inversely proportional to momentum. Larger objects with high momentum have wavelengths too small to observe."
+        ),
+        QuizQuestion(
+            id: UUID(),
+            questionText: "In an EPR pair measurement, if photon A is measured to be spin-up, what is photon B's state if they are anti-correlated?",
+            options: [
+                "Spin-up",
+                "Spin-down",
+                "Superposition",
+                "Undetermined until B is measured"
+            ],
+            correctIndex: 1,
+            level: .intermediate,
+            concept: .entanglement,
+            explanation: "If the entangled pair is anti-correlated (like a singlet state), measuring one as spin-up immediately forces the other to collapse into the spin-down state."
+        ),
+        QuizQuestion(
+            id: UUID(),
+            questionText: "What does the outer boundaries of a tesseract look like when projected into 3-dimensional space?",
+            options: [
+                "A sphere nested in a cone",
+                "A cube nested inside another cube with connected vertices",
+                "A series of interlocking pyramids",
+                "A flat hexagon shape"
+            ],
+            correctIndex: 1,
+            level: .intermediate,
+            concept: .tesseract,
+            explanation: "A perspective projection of a tesseract into 3D space results in a smaller cube centered inside a larger cube, with lines connecting their corresponding corners."
+        ),
+        QuizQuestion(
+            id: UUID(),
+            questionText: "What characterizes the n=2, l=1, m=0 orbital of a hydrogen-like atom?",
+            options: [
+                "A spherical shape (s orbital)",
+                "A dumbbell shape aligned along the z-axis (p_z orbital)",
+                "A cloverleaf shape in the xy-plane (d_xy orbital)",
+                "A ring-torus structure"
+            ],
+            correctIndex: 1,
+            level: .intermediate,
+            concept: .superposition,
+            explanation: "For angular momentum quantum number l=1, we have p orbitals. The magnetic quantum number m=0 corresponds to the p_z orbital, which is oriented along the z-axis."
+        ),
+        QuizQuestion(
+            id: UUID(),
+            questionText: "What happens when you increase the slit distance (d) in the double-slit simulation?",
+            options: [
+                "Fringes become closer together",
+                "Fringes become wider apart",
+                "Interference completely disappears",
+                "The pattern shifts to a single bright spot"
+            ],
+            correctIndex: 0,
+            level: .intermediate,
+            concept: .waveParticle,
+            explanation: "The angular spacing of interference fringes is given by θ ≈ λ / d. Increasing the slit distance (d) decreases the fringe spacing, bringing them closer together."
+        ),
+        
+        // MARK: Advanced
+        QuizQuestion(
+            id: UUID(),
+            questionText: "Which inequality establishes that local hidden variables cannot explain quantum correlations?",
+            options: [
+                "Heisenberg Uncertainty Inequality",
+                "Bell's Inequality (CHSH formulation)",
+                "Schrödinger Wave Equation",
+                "Euler-Lagrange Equation"
+            ],
+            correctIndex: 1,
+            level: .advanced,
+            concept: .entanglement,
+            explanation: "Bell's theorem states that quantum entanglement violates local realism. The CHSH inequality puts a limit of 2 on classical correlations, whereas quantum mechanics allows up to 2√2 ≈ 2.82."
+        ),
+        QuizQuestion(
+            id: UUID(),
+            questionText: "What represents the zero-point energy of a quantum harmonic oscillator?",
+            options: ["Zero", "E = (1/2) * h-bar * ω", "E = h-bar * ω", "E = k_B * T"],
+            correctIndex: 1,
+            level: .advanced,
+            concept: .tesseract,
+            explanation: "Due to the Heisenberg uncertainty principle, a quantum harmonic oscillator cannot have zero energy at ground state. Its zero-point energy is E = (1/2)ℏω."
+        ),
+        QuizQuestion(
+            id: UUID(),
+            questionText: "What mathematical transformation is applied to map a tesseract rotating in the XW plane into 3D?",
+            options: [
+                "4D rotation matrix followed by a perspective projection matrix",
+                "3D orthographic scale followed by translation",
+                "Fourier transform of the vertex vectors",
+                "Spherical coordinate mapping"
+            ],
+            correctIndex: 0,
+            level: .advanced,
+            concept: .tesseract,
+            explanation: "We must apply a 4D rotation matrix using trig coordinates for cos(θ) and sin(θ) in the active plane (e.g. XW), then project the 4D points to 3D via perspective division: x_proj = x / (d - w)."
+        ),
+        QuizQuestion(
+            id: UUID(),
+            questionText: "What physical quantity does the square of the wavefunction magnitude (|Ψ|²) represent?",
+            options: [
+                "Energy density",
+                "Probability density",
+                "Momentum flux",
+                "Charge distribution"
+            ],
+            correctIndex: 1,
+            level: .advanced,
+            concept: .superposition,
+            explanation: "Born's Rule states that |Ψ(x,t)|² yields the probability density of finding a particle at location x at time t."
+        ),
+        QuizQuestion(
+            id: UUID(),
+            questionText: "In Bell test experiments, the maximum violation of the CHSH inequality occurs at which angle offset between detector axes?",
+            options: ["0 degrees", "22.5 degrees", "45 degrees", "90 degrees"],
+            correctIndex: 1,
+            level: .advanced,
+            concept: .entanglement,
+            explanation: "The correlation is proportional to cos(2θ). The maximum quantum violation occurs at θ = 22.5° (and 67.5°), achieving the Tsirelson bound of 2√2."
+        )
+    ]
+}
+
+extension DirectoryItem {
+    static let database: [DirectoryItem] = [
+        DirectoryItem(
+            id: UUID(),
+            name: "Photon",
+            category: .particle,
+            symbol: "γ",
+            subtitle: "Quantum of Electromagnetic Radiation",
+            properties: [
+                "Mass": "0 eV/c²",
+                "Spin": "1 (Boson)",
+                "Charge": "0",
+                "Velocity": "c (Speed of Light)"
+            ],
+            explanation: "A photon is an elementary particle representing the quantum of light and all other electromagnetic radiation. It acts as the force carrier for the electromagnetic force.",
+            application: "Photons are fundamental to laser technology, optical communications, solar power generation, and quantum entanglement experiments.",
+            concept: .waveParticle
+        ),
+        DirectoryItem(
+            id: UUID(),
+            name: "Electron",
+            category: .particle,
+            symbol: "e⁻",
+            subtitle: "Fundamental Lepton",
+            properties: [
+                "Mass": "0.511 MeV/c²",
+                "Spin": "1/2 (Fermion)",
+                "Charge": "-1 e",
+                "Mean Lifetime": "Stable (> 6.6 × 10²⁸ years)"
+            ],
+            explanation: "The electron is a subatomic particle whose electric charge is negative. It is an elementary particle belonging to the first generation of leptons, and plays a crucial role in electricity, magnetism, and chemical bonding.",
+            application: "Electrons drive all modern electronic computers, electron microscopes, chemical sensors, and quantum computing qubits.",
+            concept: .superposition
+        ),
+        DirectoryItem(
+            id: UUID(),
+            name: "Schrödinger Equation",
+            category: .equation,
+            symbol: "iℏ ∂/∂t Ψ = ĤΨ",
+            subtitle: "Wave Mechanics Governing Equation",
+            properties: [
+                "Formulated": "Erwin Schrödinger (1925)",
+                "Operator": "Ĥ (Hamiltonian)",
+                "Output": "Ψ (Wavefunction)",
+                "Variable": "t (Time)"
+            ],
+            explanation: "The Schrödinger equation is a linear partial differential equation that governs the wave function of a quantum-mechanical system, describing how its state changes over time.",
+            application: "Used to calculate atomic structures, predict chemical properties, and model solid-state semiconductor devices.",
+            concept: .superposition
+        ),
+        DirectoryItem(
+            id: UUID(),
+            name: "de Broglie Wavelength",
+            category: .equation,
+            symbol: "λ = h / p",
+            subtitle: "Matter-Wave Duality Relation",
+            properties: [
+                "Formulated": "Louis de Broglie (1924)",
+                "Variable": "λ (Wavelength)",
+                "Constant": "h (Planck Constant)",
+                "Momentum": "p (Particle Momentum)"
+            ],
+            explanation: "The de Broglie relation states that every moving particle has a wave associated with it. The wavelength of this matter wave is inversely proportional to the particle's momentum.",
+            application: "Essential for electron diffraction, neutron scattering, and understanding modern electron holography.",
+            concept: .waveParticle
+        ),
+        DirectoryItem(
+            id: UUID(),
+            name: "Bell's Inequality",
+            category: .equation,
+            symbol: "|E(a,b) - E(a,c)| ≤ 1 + E(b,c)",
+            subtitle: "Local Realism Test Boundary",
+            properties: [
+                "Formulated": "John Stewart Bell (1964)",
+                "Max Classical": "2 (CHSH Bound)",
+                "Max Quantum": "2√2 (Tsirelson Bound)",
+                "Core Concept": "Non-local Correlations"
+            ],
+            explanation: "Bell's Inequality provides a mathematical test to differentiate between classical local realism and quantum mechanics. Experiments repeatedly show quantum mechanics violates the inequality.",
+            application: "Formulates the foundation of quantum key distribution (QKD) and quantum cryptography protocols.",
+            concept: .entanglement
+        ),
+        DirectoryItem(
+            id: UUID(),
+            name: "Tesseract Geometry",
+            category: .equation,
+            symbol: "V = 16, E = 32, F = 24, C = 8",
+            subtitle: "4-Dimensional Hypercube Equation",
+            properties: [
+                "Dimension": "4D Euclidean Space",
+                "Vertices": "16",
+                "Edges": "32",
+                "Cubic Cells": "8"
+            ],
+            explanation: "A tesseract is the four-dimensional analogue of a cube. Rotating a tesseract in 4D space creates shadows in 3D that look like nested cubes shifting through each other.",
+            application: "Useful in spatial modeling, studying higher-dimensional string theory configurations, and zero-point energy visualizations.",
+            concept: .tesseract
+        )
+    ]
+}
+

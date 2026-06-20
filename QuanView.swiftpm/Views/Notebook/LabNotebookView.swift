@@ -488,7 +488,7 @@ struct NewLogPickerView: View {
                     VStack(spacing: 10) {
                         ForEach(QuantumConcept.allCases) { concept in
                             NavigationLink(destination:
-                                LessonDetailView(concept: concept)
+                                QuantumSandboxView(concept: concept)
                                     .environmentObject(progressManager)
                                     .onDisappear { dismiss() }
                             ) {

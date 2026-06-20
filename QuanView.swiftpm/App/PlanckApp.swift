@@ -15,11 +15,17 @@ struct PlanckApp: App {
                     ))
                 } else {
                     TabView {
-                        ExploreView()
-                            .tabItem { Label("Labs", systemImage: "flask.fill") }
+                        LearnListView()
+                            .tabItem { Label("Learn", systemImage: "graduationcap.fill") }
                         
-                        LabNotebookView()
-                            .tabItem { Label("Logs", systemImage: "book.pages.fill") }
+                        SandboxListView()
+                            .tabItem { Label("Sandbox", systemImage: "slider.horizontal.3") }
+                        
+                        QuizHomeView()
+                            .tabItem { Label("Test", systemImage: "checkmark.seal.fill") }
+                        
+                        DirectoryListView()
+                            .tabItem { Label("Directory", systemImage: "doc.text.magnifyingglass") }
                     }
                     .tint(.cyan)
                 }
