@@ -99,12 +99,16 @@ struct DirectoryListRow: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(item.concept.themeColor.opacity(0.12))
-                    .frame(width: 48, height: 48)
                 
                 Text(item.symbol)
-                    .font(.system(.title3, design: .serif).italic().bold())
+                    .font(.system(size: 13, weight: .bold, design: .serif).italic())
                     .foregroundStyle(item.concept.themeColor)
+                    .multilineTextAlignment(.center)
+                    .minimumScaleFactor(0.35)
+                    .lineLimit(2)
+                    .padding(4)
             }
+            .frame(width: 56, height: 56)
             
             VStack(alignment: .leading, spacing: 3) {
                 Text(item.name)

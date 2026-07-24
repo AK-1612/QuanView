@@ -3,7 +3,7 @@ import SwiftUI
 import UIKit
 
 enum QuantumConcept: String, CaseIterable, Identifiable, Codable {
-    case superposition, waveParticle, entanglement, tesseract
+    case superposition, waveParticle, entanglement, tesseract, tunneling, sternGerlach, teleportation, superconductivity
     var id: String { rawValue }
     
     var title: String {
@@ -12,6 +12,10 @@ enum QuantumConcept: String, CaseIterable, Identifiable, Codable {
         case .waveParticle: return "Wave-Particle Duality"
         case .entanglement: return "Quantum Entanglement"
         case .tesseract: return "Zero-Point Tesseract"
+        case .tunneling: return "Quantum Tunneling"
+        case .sternGerlach: return "Stern-Gerlach Experiment"
+        case .teleportation: return "Quantum Teleportation & QKD"
+        case .superconductivity: return "Superconductivity & Meissner"
         }
     }
     
@@ -21,6 +25,10 @@ enum QuantumConcept: String, CaseIterable, Identifiable, Codable {
         case .waveParticle: return "Duality of matter."
         case .entanglement: return "Instantaneous correlation."
         case .tesseract: return "Higher-dimensional anomalies."
+        case .tunneling: return "Barrier penetration."
+        case .sternGerlach: return "Space quantization & spin."
+        case .teleportation: return "State transfer & cryptography."
+        case .superconductivity: return "Zero resistance & flux expulsion."
         }
     }
     
@@ -30,6 +38,10 @@ enum QuantumConcept: String, CaseIterable, Identifiable, Codable {
         case .waveParticle: return .teal
         case .entanglement: return Color(red: 0.6, green: 0.8, blue: 1.0)
         case .tesseract: return Color(red: 0.7, green: 1.0, blue: 0.9)
+        case .tunneling: return Color(red: 0.5, green: 0.5, blue: 1.0)
+        case .sternGerlach: return Color(red: 0.9, green: 0.5, blue: 0.8)
+        case .teleportation: return Color(red: 0.4, green: 0.9, blue: 0.7)
+        case .superconductivity: return Color(red: 0.3, green: 0.8, blue: 1.0)
         }
     }
     
@@ -39,6 +51,10 @@ enum QuantumConcept: String, CaseIterable, Identifiable, Codable {
         case .waveParticle: return .systemTeal
         case .entanglement: return UIColor(red: 0.6, green: 0.8, blue: 1.0, alpha: 1.0)
         case .tesseract: return UIColor(red: 0.7, green: 1.0, blue: 0.9, alpha: 1.0)
+        case .tunneling: return UIColor(red: 0.5, green: 0.5, blue: 1.0, alpha: 1.0)
+        case .sternGerlach: return UIColor(red: 0.9, green: 0.5, blue: 0.8, alpha: 1.0)
+        case .teleportation: return UIColor(red: 0.4, green: 0.9, blue: 0.7, alpha: 1.0)
+        case .superconductivity: return UIColor(red: 0.3, green: 0.8, blue: 1.0, alpha: 1.0)
         }
     }
     
@@ -48,16 +64,15 @@ enum QuantumConcept: String, CaseIterable, Identifiable, Codable {
         case .waveParticle: return "Quantum entities exhibit properties of both waves and particles depending on the method of measurement."
         case .entanglement: return "Particles become linked such that the state of one instantaneously influences the other, regardless of distance."
         case .tesseract: return "A four-dimensional geometric anomaly representing zero-point energy fluctuations in a stabilized vacuum."
+        case .tunneling: return "Particles penetrate potential energy barriers that would be impossible to cross classically, exploiting non-zero probability amplitudes across finite barriers."
+        case .sternGerlach: return "Demonstrates intrinsic quantum angular momentum (spin) quantization by splitting an atomic beam into discrete paths using an inhomogeneous magnetic field."
+        case .teleportation: return "Transfers an unknown quantum state to a distant particle using an entangled pair and classical communication, without moving physical matter."
+        case .superconductivity: return "At critical temperature Tc, Cooper pairs condense into a macroscopic quantum ground state, expelling magnetic flux lines and levitating magnets."
         }
     }
     
     var modelAssetName: String {
-        switch self {
-        case .superposition: return "Atomic_Orbitals"
-        case .waveParticle: return "YOUNGS_DOUBLE_SLIT_EXPERIMENT"
-        case .entanglement: return "atom_3D"
-        case .tesseract: return "Tesseract"
-        }
+        return rawValue
     }
     
     var viewerFitSize: Float {
@@ -66,6 +81,10 @@ enum QuantumConcept: String, CaseIterable, Identifiable, Codable {
         case .waveParticle: return 0.82
         case .entanglement: return 0.68
         case .tesseract: return 0.62
+        case .tunneling: return 0.75
+        case .sternGerlach: return 0.80
+        case .teleportation: return 0.78
+        case .superconductivity: return 0.70
         }
     }
     
@@ -73,6 +92,8 @@ enum QuantumConcept: String, CaseIterable, Identifiable, Codable {
         switch self {
         case .waveParticle: return 1.9
         case .tesseract: return 1.45
+        case .sternGerlach: return 1.85
+        case .teleportation: return 1.95
         default: return 1.65
         }
     }
@@ -80,13 +101,21 @@ enum QuantumConcept: String, CaseIterable, Identifiable, Codable {
     var experimentPrompt: String {
         switch self {
         case .superposition:
-            return "Rotate through the orbital shapes, then run collapse to compare probability cloud behavior against a single observed state."
+            return "Rotate through orbital shapes, then run collapse to compare probability cloud behavior against a single observed state."
         case .waveParticle:
             return "Use the double-slit setup to watch a wavefront become a measurement pattern."
         case .entanglement:
-            return "Use the atom model as a paired-particle stand-in and watch synchronized state changes."
+            return "Watch synchronized state changes across the paired particle nodes."
         case .tesseract:
-            return "Inspect the higher-dimensional frame, then execute the zero-point expansion."
+            return "Inspect the 4D hypercubic frame, then execute the zero-point expansion."
+        case .tunneling:
+            return "Adjust potential barrier height V₀ and width L to measure transmission coefficient T."
+        case .sternGerlach:
+            return "Fire silver atoms through the inhomogeneous magnetic poles to observe discrete spin +1/2 and -1/2 beam splitting."
+        case .teleportation:
+            return "Perform a Bell-state measurement on Alice's node to transmit the qubit state across the entangled link to Bob."
+        case .superconductivity:
+            return "Cool the superconducting ceramic below Tc to trigger flux expulsion and levitate the permanent magnet."
         }
     }
     
@@ -96,19 +125,31 @@ enum QuantumConcept: String, CaseIterable, Identifiable, Codable {
         case .waveParticle: return 2
         case .entanglement: return 3
         case .tesseract: return 4
+        case .tunneling: return 5
+        case .sternGerlach: return 6
+        case .teleportation: return 7
+        case .superconductivity: return 8
         }
     }
 
     var physicsBackground: String {
         switch self {
         case .superposition:
-            return "Quantum superposition is a fundamental principle of quantum mechanics stating that a quantum system can exist in multiple states simultaneously until it is measured. Described mathematically by the Schrödinger equation, a particle's wavefunction encodes the probability amplitude of each possible state. When a measurement is made, the wavefunction collapses to a single eigenstate — a process that has no classical analogue. This is the basis for quantum computing, where qubits exploit superposition to process exponentially more information than classical bits."
+            return "Quantum superposition is a fundamental principle stating that a system can exist in multiple states simultaneously. Described mathematically by the Schrödinger equation, a particle's wavefunction encodes the probability amplitude of each possible state. When measured, it collapses to a single eigenstate."
         case .waveParticle:
-            return "Wave-particle duality is the concept that every quantum entity exhibits both wave-like and particle-like properties. In Young's double-slit experiment, a single photon or electron produces an interference pattern — a wave phenomenon — yet is detected as a discrete point on the screen — a particle phenomenon. The de Broglie hypothesis (1924) extended this to all matter: λ = h/p, where λ is the de Broglie wavelength, h is Planck's constant, and p is momentum. The act of measuring which slit the particle passes through destroys the interference pattern, demonstrating the observer effect."
+            return "Wave-particle duality states that every quantum entity exhibits both wave-like and particle-like properties. In Young's double-slit experiment, single particles produce an interference pattern — a wave phenomenon — yet register as discrete detection spots. De Broglie wavelength λ = h/p."
         case .entanglement:
-            return "Quantum entanglement occurs when two or more particles interact in such a way that the quantum state of each cannot be described independently of the others, even when separated by large distances. Measuring one particle instantaneously determines the correlated state of its partner — a phenomenon Einstein called 'spooky action at a distance.' Bell's theorem (1964) and subsequent experiments by Aspect et al. (1982) confirmed that entanglement violates classical local hidden-variable theories. Entanglement is the resource behind quantum teleportation, quantum cryptography, and quantum error correction."
+            return "Quantum entanglement occurs when particles interact such that their quantum states cannot be described independently. Measuring one particle instantaneously determines the state of its partner. Bell's theorem confirms this violates classical local realism."
         case .tesseract:
-            return "A tesseract is the four-dimensional analogue of a cube, also called a hypercube or 8-cell. Just as a 3D cube has 6 square faces, a tesseract has 8 cubic cells. In the context of quantum field theory, zero-point energy is the lowest possible energy a quantum system can have — it cannot be zero due to the Heisenberg uncertainty principle (ΔxΔp ≥ ℏ/2). The Casimir effect provides experimental evidence for zero-point energy through the measurable attractive force between two uncharged conducting plates in a vacuum. The tesseract here serves as a geometric metaphor for higher-dimensional quantum field configurations."
+            return "A tesseract is the four-dimensional analogue of a cube (8-cell). Zero-point energy is the lowest possible energy a quantum system can have, driven by Heisenberg's uncertainty principle (ΔxΔp ≥ ℏ/2). The tesseract serves as a geometric metaphor for 4D vacuum fluctuations."
+        case .tunneling:
+            return "Quantum tunneling occurs when a wave packet encounters a potential energy barrier higher than its kinetic energy E < V₀. The wavefunction decays exponentially inside the barrier ψ(x) ~ e^(-κx) but retains a non-zero amplitude on the other side, yielding transmission T ~ e^(-2κL)."
+        case .sternGerlach:
+            return "Performed in 1922 by Stern and Gerlach, silver atoms passed through an inhomogeneous magnetic field. The beam split into two discrete lines (ms = ±1/2), proving spatial quantization of intrinsic spin angular momentum."
+        case .teleportation:
+            return "Quantum teleportation uses a shared entangled EPR pair between Alice and Bob. Alice performs a joint Bell-state measurement on her unknown qubit state |ψ⟩ and her half of the pair, sending 2 classical bits to Bob, allowing Bob to reconstruct |ψ⟩ perfectly."
+        case .superconductivity:
+            return "Below critical temperature Tc, electrons form Cooper pairs mediated by phonons. These pairs condense into a macroscopic quantum ground state. The Meissner effect expels magnetic fields B = 0 from the interior, enabling quantum flux pinning and levitation."
         }
     }
 }
@@ -216,11 +257,43 @@ class UserProgressManager: ObservableObject {
             COHERENCE: \(coherence)%  ·  FIELD STABILITY: \(stability)%
             CONFIDENCE: \(confidence)%
 
-            Image analysis confirms a zero-point energy fluctuation event within a stabilized 4D geometric frame. The tesseract projection visible in the capture exhibits the expected 24-cell shadow geometry when collapsed from 4D to 3D Euclidean space.
+            Image analysis confirms a zero-point energy fluctuation event within a stabilized 4D geometric frame. The tesseract projection visible in the capture exhibits the expected shadow geometry when collapsed from 4D to 3D Euclidean space.
 
-            Zero-point energy density at the core is estimated at \(Int.random(in: 10...99)) × 10⁻³ J/m³, consistent with vacuum fluctuation models. The outer shell rotation rate indicates a stable hypercubic configuration with no topological defects detected.
+            Zero-point energy density at the core is consistent with vacuum fluctuation models. Outer shell rotation indicates a stable hypercubic configuration.
+            """
+        case .tunneling:
+            return """
+            QUANTUM SIGNATURE: VERIFIED
+            COHERENCE: \(coherence)%  ·  FIELD STABILITY: \(stability)%
+            CONFIDENCE: \(confidence)%
 
-            The anomalous geometry cannot be explained by any 3-dimensional classical structure. This observation is consistent with a transient higher-dimensional manifold intersection event.
+            Image analysis confirms a quantum tunneling event across a finite potential energy barrier V₀. Non-zero wave packet amplitude is detected in the classically forbidden region.
+
+            Exponential decay inside the barrier matches theoretical transmission T ≈ exp(-2κL). The transmitted wave packet retains original phase coherence.
+            """
+        case .sternGerlach:
+            return """
+            QUANTUM SIGNATURE: VERIFIED
+            COHERENCE: \(coherence)%  ·  FIELD STABILITY: \(stability)%
+            CONFIDENCE: \(confidence)%
+
+            Image analysis confirms space quantization of intrinsic spin angular momentum. An atomic beam passing through an inhomogeneous magnetic field ∇B exhibits discrete beam splitting into ms = +1/2 and ms = -1/2 components.
+            """
+        case .teleportation:
+            return """
+            QUANTUM SIGNATURE: VERIFIED
+            COHERENCE: \(coherence)%  ·  FIELD STABILITY: \(stability)%
+            CONFIDENCE: \(confidence)%
+
+            Image analysis confirms successful quantum teleportation across an entangled EPR channel. Alice's joint Bell-state measurement destroyed the original state while transferring exact qubit amplitudes to Bob's receiver node.
+            """
+        case .superconductivity:
+            return """
+            QUANTUM SIGNATURE: VERIFIED
+            COHERENCE: \(coherence)%  ·  FIELD STABILITY: \(stability)%
+            CONFIDENCE: \(confidence)%
+
+            Image analysis confirms the Meissner effect in a superconductor below critical temperature Tc. Complete magnetic flux expulsion B = 0 produces macroscopic quantum levitation and flux pinning stability.
             """
         }
     }
@@ -626,6 +699,70 @@ extension DirectoryItem {
             explanation: "A tesseract is the four-dimensional analogue of a cube. Rotating a tesseract in 4D space creates shadows in 3D that look like nested cubes shifting through each other.",
             application: "Useful in spatial modeling, studying higher-dimensional string theory configurations, and zero-point energy visualizations.",
             concept: .tesseract
+        ),
+        DirectoryItem(
+            id: UUID(),
+            name: "Quantum Tunneling",
+            category: .equation,
+            symbol: "T ≈ exp(-2κL)",
+            subtitle: "Barrier Penetration Probability",
+            properties: [
+                "Decay Constant": "κ = √(2m(V₀ - E))/ℏ",
+                "Barrier Width": "L",
+                "Energy Condition": "E < V₀",
+                "Mechanism": "Exponential Wave Decay"
+            ],
+            explanation: "Quantum tunneling occurs when a wave packet encounters a potential energy barrier higher than its kinetic energy. The wavefunction decays exponentially inside the barrier but retains non-zero amplitude on the far side.",
+            application: "Underpins nuclear fusion in stars, scanning tunneling microscopes (STM), and flash memory transistors.",
+            concept: .tunneling
+        ),
+        DirectoryItem(
+            id: UUID(),
+            name: "Stern-Gerlach Magnet",
+            category: .particle,
+            symbol: "S = ℏ/2 (ms = ±1/2)",
+            subtitle: "Intrinsic Spin Quantization Apparatus",
+            properties: [
+                "Field Gradient": "∂B_z / ∂z ≠ 0",
+                "Splitting": "2S + 1 Discrete Paths",
+                "Spin": "1/2 ħ",
+                "Atom Used": "Silver (Ag)"
+            ],
+            explanation: "The Stern-Gerlach apparatus uses an inhomogeneous magnetic field to split a beam of neutral magnetic silver atoms into discrete spin states.",
+            application: "Proven demonstration of spatial spin quantization, essential for quantum state preparation and qubit measurement.",
+            concept: .sternGerlach
+        ),
+        DirectoryItem(
+            id: UUID(),
+            name: "Quantum Teleportation",
+            category: .equation,
+            symbol: "|Ψ_out⟩ = U_classical · |Ψ_in⟩",
+            subtitle: "EPR State Transfer Protocol",
+            properties: [
+                "Resource": "Shared EPR Entangled Pair",
+                "Communication": "2 Classical Bits",
+                "Measurement": "Joint Bell State Measurement",
+                "No-Cloning": "Original State Destroyed"
+            ],
+            explanation: "Quantum teleportation transfers an unknown quantum state using a shared EPR pair and classical bits, without transmitting physical particles.",
+            application: "Core protocol for the Quantum Internet, distributed quantum computing, and quantum repeaters.",
+            concept: .teleportation
+        ),
+        DirectoryItem(
+            id: UUID(),
+            name: "Meissner Effect",
+            category: .equation,
+            symbol: "B = 0 (Inside Superconductor)",
+            subtitle: "Perfect Diamagnetism & Flux Pinning",
+            properties: [
+                "Penetration Depth": "λ_L",
+                "Critical Temp": "T_c",
+                "Carrier": "Cooper Pairs",
+                "B-Field": "Expelled (B = 0)"
+            ],
+            explanation: "The Meissner effect is the complete expulsion of magnetic flux lines from a superconductor when cooled below its critical temperature Tc.",
+            application: "Powers Maglev trains, MRI superconducting magnets, and quantum levitation bearings.",
+            concept: .superconductivity
         )
     ]
 }

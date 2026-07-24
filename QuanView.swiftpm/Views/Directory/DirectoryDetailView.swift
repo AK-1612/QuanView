@@ -45,9 +45,13 @@ struct DirectoryDetailView: View {
                     
                     // Large Symbol Badge
                     Text(item.symbol)
-                        .font(.system(size: 32, weight: .bold, design: .serif))
+                        .font(.system(size: 24, weight: .bold, design: .serif))
                         .italic()
                         .foregroundStyle(item.concept.themeColor)
+                        .multilineTextAlignment(.trailing)
+                        .minimumScaleFactor(0.4)
+                        .lineLimit(2)
+                        .frame(maxWidth: 140, alignment: .trailing)
                 }
                 .padding(.horizontal, 4)
                 

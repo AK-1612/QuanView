@@ -317,6 +317,41 @@ struct ARViewContainer: UIViewRepresentable {
 
                 shell.addChild(halo); shell.addChild(core)
                 modelBase.addChild(shell)
+
+            case .tunneling:
+                let barrier = ModelEntity(mesh: .generateBox(size: [0.03, 0.15, 0.15]), materials: [UnlitMaterial(color: .purple)])
+                barrier.name = "barrier"
+                modelBase.addChild(barrier)
+                
+                let p = ModelEntity(mesh: .generateSphere(radius: 0.015), materials: [UnlitMaterial(color: uiColor)])
+                p.name = "tunneling_p"
+                p.position = [-0.1, 0, 0]
+                modelBase.addChild(p)
+
+            case .sternGerlach:
+                let magnetTop = ModelEntity(mesh: .generateBox(size: [0.1, 0.05, 0.1]), materials: [UnlitMaterial(color: .red)])
+                magnetTop.position = [0, 0.08, 0]
+                let magnetBot = ModelEntity(mesh: .generateBox(size: [0.1, 0.05, 0.1]), materials: [UnlitMaterial(color: .blue)])
+                magnetBot.position = [0, -0.08, 0]
+                modelBase.addChild(magnetTop)
+                modelBase.addChild(magnetBot)
+
+            case .teleportation:
+                let alice = ModelEntity(mesh: .generateSphere(radius: 0.02), materials: [UnlitMaterial(color: .purple)])
+                alice.position = [-0.1, 0, 0]
+                let bob = ModelEntity(mesh: .generateSphere(radius: 0.02), materials: [UnlitMaterial(color: .green)])
+                bob.position = [0.1, 0, 0]
+                modelBase.addChild(alice)
+                modelBase.addChild(bob)
+
+            case .superconductivity:
+                let disk = ModelEntity(mesh: .generateBox(size: [0.2, 0.02, 0.2], cornerRadius: 0.01), materials: [UnlitMaterial(color: .darkGray)])
+                disk.position = [0, -0.05, 0]
+                let magnet = ModelEntity(mesh: .generateBox(size: 0.04), materials: [UnlitMaterial(color: uiColor)])
+                magnet.name = "super_mag"
+                magnet.position = [0, 0.05, 0]
+                modelBase.addChild(disk)
+                modelBase.addChild(magnet)
             }
             
             subscription?.cancel()
@@ -371,6 +406,18 @@ struct ARViewContainer: UIViewRepresentable {
                     shell.findEntity(named: "tesseract_core")?.orientation *= simd_quatf(angle: -0.05 * parent.physicsIntensity, axis: [0, 1, 0])
                     shell.findEntity(named: "tesseract_halo")?.orientation *= simd_quatf(angle: -0.05 * parent.physicsIntensity, axis: [0, 1, 0])
                 }
+            case .tunneling:
+                if let p = modelBase.findEntity(named: "tunneling_p") {
+                    p.position.x = sin(timeElapsed * 2.0) * 0.12
+                }
+            case .sternGerlach:
+                break
+            case .teleportation:
+                break
+            case .superconductivity:
+                if let mag = modelBase.findEntity(named: "super_mag") {
+                    mag.position.y = 0.05 + sin(timeElapsed * 3.0) * 0.01
+                }
             }
         }
 
@@ -402,6 +449,8 @@ struct ARViewContainer: UIViewRepresentable {
                 if let core = modelBase.findEntity(named: "tesseract_core"), let shell = modelBase.findEntity(named: "tesseract_shell") {
                     core.move(to: Transform(scale: [3, 3, 3], translation: .zero), relativeTo: shell, duration: 0.4, timingFunction: .easeInOut)
                 }
+            case .tunneling, .sternGerlach, .teleportation, .superconductivity:
+                break
             }
             
             Task {

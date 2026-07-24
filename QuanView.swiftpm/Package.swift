@@ -43,10 +43,7 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "AppModule",
-            path: ".",
-            resources: [
-                .process("Resources/Models")
-            ]
+            path: "."
         )
     ],
     swiftLanguageVersions: [.version("6")]

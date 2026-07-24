@@ -282,6 +282,87 @@ struct QuantumSandboxView: View {
                     )
                     .tint(concept.themeColor)
                 }
+            case .tunneling:
+                VStack(spacing: 8) {
+                    HStack {
+                        Text("Barrier Height (V₀)")
+                            .font(.subheadline)
+                            .foregroundStyle(.white)
+                        Spacer()
+                        Text(String(format: "%.2f eV", viewModel.barrierHeight))
+                            .font(.system(.subheadline, design: .monospaced).bold())
+                            .foregroundStyle(concept.themeColor)
+                    }
+                    Slider(
+                        value: Binding(
+                            get: { Double(viewModel.barrierHeight) },
+                            set: { viewModel.barrierHeight = Float($0) }
+                        ),
+                        in: 0.5...3.0
+                    )
+                    .tint(concept.themeColor)
+                }
+            case .sternGerlach:
+                VStack(spacing: 8) {
+                    HStack {
+                        Text("Field Gradient (∇B)")
+                            .font(.subheadline)
+                            .foregroundStyle(.white)
+                        Spacer()
+                        Text(String(format: "%.1f T/m", viewModel.magneticGradient))
+                            .font(.system(.subheadline, design: .monospaced).bold())
+                            .foregroundStyle(concept.themeColor)
+                    }
+                    Slider(
+                        value: Binding(
+                            get: { Double(viewModel.magneticGradient) },
+                            set: { viewModel.magneticGradient = Float($0) }
+                        ),
+                        in: 0.5...5.0
+                    )
+                    .tint(concept.themeColor)
+                }
+            case .teleportation:
+                VStack(spacing: 8) {
+                    HStack {
+                        Text("Bell State (|Φ⁺⟩)")
+                            .font(.subheadline)
+                            .foregroundStyle(.white)
+                        Spacer()
+                        Text("State \(viewModel.bellStateIndex + 1)")
+                            .font(.system(.subheadline, design: .monospaced).bold())
+                            .foregroundStyle(concept.themeColor)
+                    }
+                    Slider(
+                        value: Binding(
+                            get: { Double(viewModel.bellStateIndex) },
+                            set: { viewModel.bellStateIndex = Int($0) }
+                        ),
+                        in: 0...3,
+                        step: 1
+                    )
+                    .tint(concept.themeColor)
+                }
+            case .superconductivity:
+                VStack(spacing: 8) {
+                    HStack {
+                        Text("Temperature (T)")
+                            .font(.subheadline)
+                            .foregroundStyle(.white)
+                        Spacer()
+                        Text(String(format: "%.0f K", viewModel.criticalTemperature))
+                            .font(.system(.subheadline, design: .monospaced).bold())
+                            .foregroundStyle(concept.themeColor)
+                    }
+                    Slider(
+                        value: Binding(
+                            get: { Double(viewModel.criticalTemperature) },
+                            set: { viewModel.criticalTemperature = Float($0) }
+                        ),
+                        in: 4...150
+                    )
+                    .tint(concept.themeColor)
+                }
             }
         }
         .padding(14)

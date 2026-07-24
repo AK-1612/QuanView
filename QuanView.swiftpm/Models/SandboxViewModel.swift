@@ -26,6 +26,10 @@ class SandboxViewModel: ObservableObject {
     @Published var slitDistance: Float = 0.05 // Slit separation d
     @Published var polarizationAngle: Float = 0.0 // Entangled spin filter angle
     @Published var rotationSpeed4D: Float = 1.0 // Tesseract rotation speed
+    @Published var barrierHeight: Float = 1.5 // Tunneling potential barrier V0
+    @Published var magneticGradient: Float = 2.0 // Stern-Gerlach field gradient dB/dz
+    @Published var bellStateIndex: Int = 0 // Quantum teleportation Bell pair state
+    @Published var criticalTemperature: Float = 77.0 // Superconducting temp (K)
     
     init(concept: QuantumConcept) {
         self.concept = concept
@@ -40,5 +44,9 @@ class SandboxViewModel: ObservableObject {
         slitDistance = 0.05
         polarizationAngle = 0.0
         rotationSpeed4D = 1.0
+        barrierHeight = 1.5
+        magneticGradient = 2.0
+        bellStateIndex = 0
+        criticalTemperature = 77.0
     }
 }
