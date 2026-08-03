@@ -142,7 +142,7 @@ struct ARViewContainer: UIViewRepresentable {
                         // Boost emissive so the model is clearly visible in any lighting
                         pbr.emissiveIntensity = max(1.5, brightness * 4.0)
                         newMaterials.append(pbr)
-                    } else if var unlit = mat as? UnlitMaterial {
+                    } else if let unlit = mat as? UnlitMaterial {
                         // Unlit materials are always fully visible — keep as-is
                         newMaterials.append(unlit)
                     } else {
